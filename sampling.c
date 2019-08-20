@@ -21,19 +21,20 @@ void resetShape(struct matlab_variables* p_vars)
 
 int main(int argc, char* argv[])
 {
-    if(argc < 4) {
-        printf("Usage: %s <N_shape> <N_samples> <filename> <seed> \n", argv[0]);
+    if(argc < 5) {
+        printf("Usage: %s <N_us> <N_ua> <N_samples> <filename> <seed> \n", argv[0]);
         return 1;
     }
-    int Nshape = atoi(argv[1]);
-    int Nsample = atoi(argv[2]);
-    int seed = atoi(argv[4]);
+    int N_us = atoi(argv[1]);
+    int N_ua = atoi(argv[2]);
+    int Nsample = atoi(argv[3]);
+    int seed = atoi(argv[5]);
     char* filename_shape; 
     char* filename_measure;
-    filename_shape = (char*)malloc((strlen(argv[3]) + 6) * sizeof(char));
-    filename_measure = (char*)malloc((strlen(argv[3]) + 6) * sizeof(char));
-    sprintf(filename_shape, "%s_s.txt", argv[3]);
-    sprintf(filename_measure, "%s_m.txt", argv[3]);
+    filename_shape = (char*)malloc((strlen(argv[4]) + 6) * sizeof(char));
+    filename_measure = (char*)malloc((strlen(argv[4]) + 6) * sizeof(char));
+    sprintf(filename_shape, "%s_s.txt", argv[4]);
+    sprintf(filename_measure, "%s_m.txt", argv[4]);
     printf("filenames: %s\t%s\n", filename_shape, filename_measure);
 
     int i, j, k;
@@ -47,15 +48,20 @@ int main(int argc, char* argv[])
     for(j = 0; j < vars.n_shape; ++j)
       free(vars.shape[j]);
     free(vars.shape);
-    vars.n_shape = Nshape;
-    vars.n_us = vars.n_shape;
+    vars.n_shape = N_us + N_ua;
+    vars.shape = generateGeo(vars.n_shape, 0.1, 100);
+    vars.n_us = N_us;
+    vars.n_ua = N_ua;
     free(vars.val_us);
+    free(vars.val_ua);
     vars.val_us = malloc((vars.n_us+1)*sizeof(double));
+    vars.val_ua = malloc((vars.n_ua+1)*sizeof(double));
     vars.val_us[0] = 1.;
     for(i = 0; i < vars.n_us; ++i)
       vars.val_us[i+1] = 2.;
-
-    vars.shape = generateGeo(vars.n_shape, 0.1, 100);
+    vars.val_ua[0] = 0.01;
+    for(i = 0; i < vars.n_ua; ++i)
+      vars.val_ua[i+1] = 0.02;
 
     FILE* f_s = fopen(filename_shape, "w");
     FILE* f_m = fopen(filename_measure, "w");
