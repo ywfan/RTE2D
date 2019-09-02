@@ -170,6 +170,7 @@ int findtri(int tri,int *pt1,int *pt2)
 
 double** generatePoints(int n, double R, int flag)
 {
+    int i, j;
     double angle = 2. * Pi / (double)n;
     double start = 0.;
     if(flag == 0)
@@ -180,10 +181,10 @@ double** generatePoints(int n, double R, int flag)
     // start += angle / 16.;
     double **var;
     var=malloc(n*sizeof(double *));
-    for(int i = 0; i < n; i++)
+    for(i = 0; i < n; i++)
     {   
         var[i]=malloc(3*sizeof(double));
-        for(int j = 0; j < 3; j++)
+        for(j = 0; j < 3; j++)
         {
             var[i][0] = R * cos(start + (double)i * angle);
             var[i][1] = R * sin(start + (double)i * angle);
