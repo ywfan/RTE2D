@@ -64,29 +64,43 @@ int main(int argc, char* argv[])
 
     FILE* f_s = fopen(filename_shape, "w");
     FILE* f_m = fopen(filename_measure, "w");
+    double angle = 2. * Pi / vars.Nsor;
+    double tmp;
+    vars.alevel = 5;
+    vars.slevel = 4;
+    int l;
     for(k = 0; k < Nsample; ++k)
     {
         resetShape(&vars);
-        t1 = clock();
-        measurement = DOT2D(vars);
-		t2=clock();
-		printf("sample %d, runtime: %f\n", k+1, (t2-t1) / (double)CLOCKS_PER_SEC);
-        fprintf(f_s, "%d\t", vars.n_shape);
-        for(i = 0; i < vars.n_shape; ++i) {
-            for(j = 0; j < 5; ++j)
-              fprintf(f_s, "%.16e\t", vars.shape[i][j]);
-        }
-        fprintf(f_s, "\n");
-        for(i=0;i<vars.Nsor;i++)
-        {   for(j=0;j<vars.Ndet;j++)
-            {
-                fprintf(f_m, "%.16e\t", measurement[i][j]);
+        for(l = 0; l < 3; ++l) 
+        {
+            for(j = 0; j < vars.n_shape; ++j) {
+                tmp = vars.shape[j][0] * cos(angle) + vars.shape[j][1] * sin(angle);
+                vars.shape[j][1] = -vars.shape[j][0] * sin(angle) + vars.shape[j][1] * cos(angle);
+                vars.shape[j][0] = tmp;
+                vars.shape[j][4] += angle;
             }
+            t1 = clock();
+            measurement = DOT2D(vars);
+            t2=clock();
+            printf("sample %d, runtime: %f\n", k+1, (t2-t1) / (double)CLOCKS_PER_SEC);
+            fprintf(f_s, "%d\t", vars.n_shape);
+            for(i = 0; i < vars.n_shape; ++i) {
+                for(j = 0; j < 5; ++j)
+                  fprintf(f_s, "%.16e\t", vars.shape[i][j]);
+            }
+            fprintf(f_s, "\n");
+            for(i=0;i<vars.Nsor;i++)
+            {   for(j=0;j<vars.Ndet;j++)
+                {
+                    fprintf(f_m, "%.16e\t", measurement[i][j]);
+                }
+            }
+            fprintf(f_m, "\n");
+            for(i=0; i < vars.Nsor; ++i)
+              free(measurement[i]);
+            free(measurement);
         }
-        fprintf(f_m, "\n");
-        for(i=0; i < vars.Nsor; ++i)
-          free(measurement[i]);
-        free(measurement);
     }
     fclose(f_s);
     fclose(f_m);

@@ -176,6 +176,8 @@ double** generatePoints(int n, double R, int flag)
     {
         start = angle / 2.;
     }
+    // start += 2. * Pi / (192.*0.125);
+    // start += angle / 16.;
     double **var;
     var=malloc(n*sizeof(double *));
     for(int i = 0; i < n; i++)
