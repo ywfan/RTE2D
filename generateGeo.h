@@ -45,7 +45,7 @@ double** generateGeo(int n, double len, int n_msh)
         count++;
         if(isShapeAvailable(shape, n, n_msh)) 
         {
-            printf("%d\n", count);
+            //printf("%d\n", count);
             return shape;
         }
     }
