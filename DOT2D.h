@@ -27,11 +27,12 @@ double** DOT2D(struct matlab_variables vars)
     {measurement[is]=malloc(det.n*sizeof(double));}
 
 
+    //FILE* f_sor = fopen("sor", "w");
     for(is=0;is<sor.n;is++)
     {
         tri=sor.t[is];
         // 1. assemble light source into "RHS"
-        source_corr=a[tri]/12;
+        source_corr=a[tri]/vars.Nsor;
         for(j=0;j<ns;j++)
         {   
             temp=0;
@@ -39,18 +40,22 @@ double** DOT2D(struct matlab_variables vars)
             {   
                 s_int2[k]=sor.i[is][j][k]/source_corr;
                 temp+=s_int2[k];
+                //fprintf(f_sor, "%.15f\t", sor.i[is][j][k] / source_corr);
             }
             temp=temp/4;
             for(k=0;k<3;k++)
             {
                 fp.RHS[level][j][tri][k]=s_int2[k]-temp;
+                //fprintf(f_sor, "%.15f\t", fp.RHS[level][j][tri][k]);
             }
+            //fprintf(f_sor, "\n");
         }
 
         // 2. solving RTE
         RTE_2D(fp);
 
         // measurement
+        //FILE* f_det= fopen("det", "w");
         for(id=0;id<det.n;id++)
         {
             measurement[is][id]=0;
@@ -59,10 +64,14 @@ double** DOT2D(struct matlab_variables vars)
             {   for(k=0;k<3;k++)
                 {
                     measurement[is][id]+=det.i[id][j][k]*fp.flux[level][j][tri][k];
+                    //fprintf(f_det, "%f\t", det.i[id][j][k]);
                 }
+                //fprintf(f_det, "\n");
             }
         }
+        //fclose(f_det);
     }
+    //fclose(f_sor);
     // 4. free variables
     // for(is=0;is<sor.n;is++)
     // {free(measurement[is]);}

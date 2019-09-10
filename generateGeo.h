@@ -23,8 +23,6 @@ double** generateGeo(int n, double len, int n_msh)
 {
     double** shape;
     double r, theta;
-    double len2;
-    len2 = len * 2. / 3.;
     int i;
     shape = malloc(n*sizeof(double*));
     for(i = 0; i < n; ++i) 
@@ -39,7 +37,7 @@ double** generateGeo(int n, double len, int n_msh)
             shape[i][0] = r * cos(theta);
             shape[i][1] = r * sin(theta);
             shape[i][2] = len * myRand() + len;
-            shape[i][3] = len2 * myRand() + len2/2.;
+            shape[i][3] = 0.5 * (len * myRand() + len);
             shape[i][4] = 2. * Pi * myRand();
         }
         count++;

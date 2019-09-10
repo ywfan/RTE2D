@@ -32,7 +32,7 @@ double dotproduct(int N, double *x, double *y);
 int findtri(int tri,int *pt1,int *pt2);
 int findtri2(int *pt1,int *pt2);
 
-double** generatePoints(int, double, int);
+double** generatePoints(int, double, int, int);
 
 // other utility functions
 int intpower(int x,int y)
@@ -168,7 +168,7 @@ int findtri(int tri,int *pt1,int *pt2)
 }
 
 
-double** generatePoints(int n, double R, int flag)
+double** generatePoints(int n, double R, int flag, int slevel)
 {
     int i, j;
     double angle = 2. * Pi / (double)n;
@@ -179,6 +179,7 @@ double** generatePoints(int n, double R, int flag)
     }
     // start += 2. * Pi / (192.*0.125);
     // start += angle / 16.;
+    // start += 2. * Pi / (n * 2 * intpower(2, slevel + 1));
     double **var;
     var=malloc(n*sizeof(double *));
     for(i = 0; i < n; i++)

@@ -63,10 +63,21 @@ struct variables_fp initialization_fp(struct matlab_variables vars)
 
 	// 1.2. load para.amesh
 	amesh=malloc((alevel+1)*sizeof(struct angularmesh));
-    f = fopen("amesh.txt", "r");
+    char filename_amesh[12];
+    strcpy(filename_amesh,  "amesh");
+    char al[2], sl[2];
+    char s3[] = ".txt";
+    sprintf(al, "%d", alevel+1);
+    sprintf(sl, "%d", slevel+1);
+    strcat(filename_amesh, sl);
+    strcat(filename_amesh, al);
+    strcat(filename_amesh, s3);
+    int temp;
+    f = fopen(filename_amesh, "r");
+    //f = fopen("amesh.txt", "r");
     for (i=0;i<=alevel;i++)
     {
-        fscanf(f, "%le", &tempd); amesh[i].ns=(int)tempd;
+        fscanf(f, "%d", &temp); amesh[i].ns=temp;
         amesh[i].a=malloc(amesh[i].ns*sizeof(double *));
         for(j=0;j<amesh[i].ns;j++)
         {   amesh[i].a[j]=malloc(3*sizeof(double));
@@ -87,18 +98,28 @@ struct variables_fp initialization_fp(struct matlab_variables vars)
 	// 1.3. load smesh.txt
 	//      Notice the index difference in c programming: array indexes from 0 instead of 1,
 	//      we subtract "1" from every integer-valued index here as for "so", "t" and "e" as follow.
-    f=fopen("smesh.txt", "r");
+    char filename_smesh[15];
+    strcpy(filename_smesh,  "smesh");
+    strcat(filename_smesh, sl);
+    strcat(filename_smesh, al);
+    strcat(filename_smesh, s3);
+    f = fopen(filename_smesh, "r");
+    //f=fopen("smesh.txt", "r");
 	smesh=malloc((slevel+1)*sizeof(struct spatialmesh));
 	for (i=0;i<=slevel;i++)
 	{
-		fscanf(f, "%le", &tempd);smesh[i].nt=(int)tempd;
-		fscanf(f, "%le", &tempd);smesh[i].np=(int)tempd;
-        fscanf(f, "%le", &tempd);smesh[i].ne=(int)tempd;
+		fscanf(f, "%d", &temp);smesh[i].nt=temp;
+		fscanf(f, "%d", &temp);smesh[i].np=temp;
+        fscanf(f, "%d", &temp);smesh[i].ne=temp;
+		//fscanf(f, "%le", &tempd);smesh[i].nt=(int)tempd;
+		//fscanf(f, "%le", &tempd);smesh[i].np=(int)tempd;
+        //fscanf(f, "%le", &tempd);smesh[i].ne=(int)tempd;
         smesh[i].so=malloc(amesh[alevel].ns*sizeof(int *));
         for(j=0;j<amesh[alevel].ns;j++)
         {   smesh[i].so[j]=malloc(smesh[i].nt*sizeof(int));
             for(k=0;k<smesh[i].nt;k++)
-            {fscanf(f, "%le", &tempd);smesh[i].so[j][k]=(int)tempd-1;}
+            //{fscanf(f, "%le", &tempd);smesh[i].so[j][k]=(int)tempd-1;}
+            {fscanf(f, "%d", &temp);smesh[i].so[j][k]=temp-1;}
         }
         smesh[i].p=malloc(smesh[i].np*sizeof(double *));
         for(j=0;j<smesh[i].np;j++)
@@ -110,14 +131,16 @@ struct variables_fp initialization_fp(struct matlab_variables vars)
         for(j=0;j<smesh[i].nt;j++)
         {   smesh[i].t[j]=malloc(3*sizeof(int));
             for(k=0;k<3;k++)
-            {fscanf(f, "%le", &tempd);smesh[i].t[j][k]=(int)tempd-1;}
+            //{fscanf(f, "%le", &tempd);smesh[i].t[j][k]=(int)tempd-1;}
+            {fscanf(f, "%d", &temp);smesh[i].t[j][k]=temp-1;}
         }
         smesh[i].e=malloc(smesh[i].ne*sizeof(int *));
         for(j=0;j<smesh[i].ne;j++)
         {   smesh[i].e[j]=malloc(4*sizeof(int));
             smesh[i].e[j][0]=-1;smesh[i].e[j][3]=-1;
             for(k=1;k<3;k++)
-            {fscanf(f, "%le", &tempd);smesh[i].e[j][k]=(int)tempd-1;}
+            //{fscanf(f, "%le", &tempd);smesh[i].e[j][k]=(int)tempd-1;}
+            {fscanf(f, "%d", &temp);smesh[i].e[j][k]=temp-1;}
         }
 	}
 	fclose(f);

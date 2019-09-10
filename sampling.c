@@ -42,6 +42,8 @@ int main(int argc, char* argv[])
     clock_t t1, t2;
     double** measurement;
     vars = defaultSetup( );
+    vars.slevel = 3;
+    vars.alevel = 5;
     srand(time(0) + 100000 * seed);
 
     for(j = 0; j < vars.n_shape; ++j)

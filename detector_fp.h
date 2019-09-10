@@ -39,7 +39,8 @@ struct detector det_fp(struct variables_fp fp, struct matlab_variables vars, int
         det.B = vars.Bsor;
         det.A = vars.Asor;
         det.n = vars.Nsor;
-        dxy = generatePoints(det.n, vars.R, 1);
+        // printf("slevel = %d\n", slevel);
+        dxy = generatePoints(det.n, vars.R, 1, slevel);
         // printf("Source: B = %d, A = %d, n = %d. Points:\n", det.B, det.A, det.n);
         // for (int i = 0; i < det.n; ++i) 
         // {
@@ -51,7 +52,7 @@ struct detector det_fp(struct variables_fp fp, struct matlab_variables vars, int
         det.B = vars.Bdet;
         det.A = vars.Adet;
         det.n = vars.Ndet;
-        dxy = generatePoints(det.n, vars.R, 0);
+        dxy = generatePoints(det.n, vars.R, 0, slevel);
         // printf("Detector: B = %d, A = %d, n = %d. Points:\n", det.B, det.A, det.n);
         // for (int i = 0; i < det.n; ++i) 
         // {
@@ -88,10 +89,19 @@ struct detector det_fp(struct variables_fp fp, struct matlab_variables vars, int
         }
         x=dxy[i][0];y=dxy[i][1];
         edge=findmin(ne,distance);
+        // printf("%d\t%f\t", edge, distance[edge]);
         x1=p[e[edge][1]][0];y1=p[e[edge][1]][1];
         x2=p[e[edge][2]][0];y2=p[e[edge][2]][1];
         l[0]=LENGTH(x,y,x2,y2);
         l[1]=LENGTH(x1,y1,x,y);
+        // printf("%f\t%f\t%e\t", l[0], l[1], l[0] / (l[1]+1.e-12) - 1);
+        if(fabs(l[0] / (l[1] + 1.e-12) - 1) < 1.e-4) { // added by fyw
+            temp = (l[0] + l[1]) * 0.5;
+            l[0] = l[1] = temp;
+            // printf("haha\t");
+        }
+        // printf("%f\t%f\t%e\t", l[0], l[1], l[0] / (l[1]+1.e-12) - 1);
+        // printf("\n");
         temp=l[0]+l[1];
         for (k=0;k<2;k++)
         {w_s[k]=l[k]/temp;}
@@ -99,9 +109,15 @@ struct detector det_fp(struct variables_fp fp, struct matlab_variables vars, int
         tri=e[edge][0];
         det.t[i]=tri;
 
+        //for(j=0;j<ns;j++){
+        //    printf("theta\t%f\t%f\n", theta[j][0], theta[j][1]);
+        //}
+        // printf("n\t%.12e\t%.12e\n", n[edge][0], n[edge][1]);
         if(det.A==1)
-        {   for(j=0;j<ns;j++)// angular integration with weights "s dot n" on the angular set with " sn>0"
-            {   sn=theta[j][0]*n[edge][0]+theta[j][1]*n[edge][1];
+        {   
+            for(j=0;j<ns;j++)// angular integration with weights "s dot n" on the angular set with " sn>0"
+            {   
+                sn=theta[j][0]*n[edge][0]+theta[j][1]*n[edge][1];
                 if(SOR==1&&sn<=0)
                 {   //if(sn<-0.8)
                     {   for(k=0;k<2;k++)// boundary interpolation
