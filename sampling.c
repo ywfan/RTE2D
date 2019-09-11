@@ -9,7 +9,7 @@ void resetShape(struct matlab_variables* p_vars)
     for(j = 0; j < p_vars->n_shape; ++j)
       free(p_vars->shape[j]);
     free(p_vars->shape);
-    p_vars->shape = generateGeo(p_vars->n_shape, 0.1, 100);
+    p_vars->shape = generateGeo(p_vars->n_shape, 0.15, 100);
     for(j = 0; j < p_vars->n_shape; ++j)
     {
         p_vars->shape[j][0] *= p_vars->R;
